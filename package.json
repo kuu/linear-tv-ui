@@ -8,9 +8,8 @@
     "lint": "xo",
     "build": "npm run lint && gulp build",
     "buildAll": "npm run lint && gulp",
-    "start": "forever start index.js",
+    "start": "forever start -o server.log -e error.log index.js",
     "stop": "forever stop index.js",
-    "logs": "forever logs index.js",
     "debug": "node-debug index.js --debug-brk",
     "watch": "npm run lint && gulp watch"
   },
