@@ -1,0 +1,59 @@
+<div class="myoo-section mdl-typography--text-center">
+  <div class="mdl-logo"><a href="https://github.com/kuu/linear-tv-ui"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a></div>
+  <div class="myoo-section__title">OOYALA InterBEE 2017 Demo</div>
+  <link rel="stylesheet" href="/scripts/player/html5-skin.min.css">
+  <script src="/scripts/player/core.min.js"></script>
+  <script src="/scripts/player/main_html5.min.js"></script>
+  <script src="/scripts/player/bit_wrapper.min.js"></script>
+  <script src="/scripts/player/discovery_api.min.js"></script>
+  <script src="/scripts/player/html5-skin.min.js"></script>
+  <div class="myoo-player-section">
+    <div class="myoo-player-container">
+      <div id="container" class="myoo-player"></div>
+    </div>
+    <div id="comment" class="myoo-player-comment"></div>
+  </div>
+  <script>
+  OO.ready(() => {
+    window.ooPlayer = OO.Player.create(
+      'container',
+      '{{embedCode}}',
+      {
+        pcode: '{{pcode}}',
+        playerBrandingId: '{{playerBrandingId}}',
+        // embedToken: '{{{embedToken}}}',
+        debug: true,
+        autoPlay: true,
+        loop: true,
+        skin: {
+          // config contains the configuration setting for player skin. Change this path to your local config when necessary.
+          config: '/scripts/player/skin.json'
+        }
+      }
+    );
+  });
+  </script>
+  <div class="myoo-program-section">
+      {{#each channels}}
+      {{#if this.selected}}
+      <div class="box selected">
+      {{else}}
+      <div class="box">
+      {{/if}}
+        {{#each this.programs}}
+        <div class="box{{@index}} {{this.duration}}-min">
+          <p>{{this.displayTime}}</p>
+          <p>{{this.title}}</p>
+        </div>
+        {{/each}}
+      </div>
+      {{/each}}
+  </div>
+  <script>
+  var SERVER_CHANNEL_DATA = '{{{data}}}';
+  var SERVER_CHANNEL_VIEW = '{{{view}}}';
+  var SERVER_TIME_BASE = '{{{baseTime}}}';
+  var SERVER_INITIAL_CHANNEL_ID = '{{{initialChannel}}}';
+  var SERVER_EMBED_CODE = '{{{embedCode}}}';
+  </script>
+</div>
