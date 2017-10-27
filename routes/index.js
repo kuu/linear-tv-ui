@@ -3,7 +3,7 @@ const config = require('config');
 const debug = require('debug');
 const api = require('../libs/ooyala');
 const channels = require('../models/channels');
-const {createChannelView, getTimeBase} = require('../libs/shared/program');
+const {createChannelView, getTimeBase, createChannelHeader} = require('../libs/shared/program');
 const {getPcode} = require('../libs/utils');
 
 const router = express.Router();
@@ -15,6 +15,7 @@ router.get('/', (req, res) => {
     const baseTime = getTimeBase(new Date());
     const initialChannel = data[0].id;
     const view = createChannelView(data, baseTime, initialChannel);
+    const header = createChannelHeader(baseTime);
     const embedCode = view[0].programs[0].embedCode;
     const embedToken = api.getTokenRequest(embedCode);
     res.render('program', {
@@ -23,6 +24,7 @@ router.get('/', (req, res) => {
       baseTime,
       initialChannel,
       channels: view,
+      header,
       pcode: getPcode(config.api.key),
       playerBrandingId: config.player.id,
       embedCode,

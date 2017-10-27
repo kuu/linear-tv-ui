@@ -5,7 +5,6 @@
   <script src="/scripts/player/core.min.js"></script>
   <script src="/scripts/player/main_html5.min.js"></script>
   <script src="/scripts/player/bit_wrapper.min.js"></script>
-  <script src="/scripts/player/discovery_api.min.js"></script>
   <script src="/scripts/player/html5-skin.min.js"></script>
   <div class="myoo-player-section">
     <div class="myoo-player-container">
@@ -34,6 +33,13 @@
   });
   </script>
   <div class="myoo-program-section">
+      <div class="box-header">
+        {{#each header}}
+        <div class="box{{@index}} {{this.duration}}-min">
+          {{this.displayTime}}
+        </div>
+        {{/each}}
+      </div>
       {{#each channels}}
       {{#if this.selected}}
       <div class="box selected">

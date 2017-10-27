@@ -1,6 +1,7 @@
 module.exports = {
   getTimeBase,
-  createChannelView
+  createChannelView,
+  createChannelHeader
 };
 
 function getTimeBase(date) {
@@ -15,9 +16,9 @@ function formatTime(date) {
   return `${('00' + date.getHours()).slice(-2)}:${('00' + date.getMinutes()).slice(-2)}`;
 }
 
-function getView(start, end, duration, programInfo) {
+function getView(start, end, duration, programInfo, options = {}) {
   return {
-    displayTime: `${formatTime(start)}-${formatTime(end)}`,
+    displayTime: `${options.omitStart ? '' : formatTime(start)}-${options.omitEnd ? '' : formatTime(end)}`,
     start,
     duration,
     title: programInfo.title,
@@ -37,7 +38,7 @@ function createChannelView(channels, currentTimeBase, selectedChannelId) {
     let timeBase = currentTimeBase;
     for (const program of channel.programs) {
       const start = new Date(program.start_time);
-      const duration = calculateBoxSize(start, program.duration, currentTimeBase);
+      const [duration, options] = calculateBoxSize(start, program.duration, currentTimeBase);
       if (!duration) {
         continue;
       }
@@ -48,10 +49,11 @@ function createChannelView(channels, currentTimeBase, selectedChannelId) {
           timeBase,
           start,
           idleDuration,
-          {duration: idleDuration, title: 'Idle time', embed_code: 'lmcXgzNTE65htD8QaqLYu0lj59FODGT4'}
+          {duration: idleDuration, title: 'Idle time', embed_code: 'lmcXgzNTE65htD8QaqLYu0lj59FODGT4'},
+          {omitStart: channelView.programs.length === 0}
         ));
       }
-      channelView.programs.push(getView(start, end, duration, program));
+      channelView.programs.push(getView(start, end, duration, program, options));
       timeBase = end;
     }
     if (timeBase.getTime() < timeBaseEnd.getTime()) {
@@ -60,7 +62,8 @@ function createChannelView(channels, currentTimeBase, selectedChannelId) {
         timeBase,
         timeBaseEnd,
         duration,
-        {duration, title: 'Idle time', embed_code: 'lmcXgzNTE65htD8QaqLYu0lj59FODGT4'}
+        {duration, title: 'Idle time', embed_code: 'lmcXgzNTE65htD8QaqLYu0lj59FODGT4'},
+        {omitEnd: true}
       ));
     }
     channelView.id = channel.id;
@@ -73,18 +76,33 @@ function createChannelView(channels, currentTimeBase, selectedChannelId) {
 }
 
 function calculateBoxSize(start, duration, currentTimeBase) {
-  const startTime = getTimeBase(start).getTime();
-  const endTime = startTime + duration * 60000;
+  let startTime = getTimeBase(start).getTime();
+  let endTime = startTime + duration * 60000;
   const boxStart = currentTimeBase.getTime();
   const boxEnd = boxStart + 3600000; // 1 hour
-  let visiblePortion = 0;
+  const options = {};
   if (startTime < boxStart) {
-    visiblePortion = Math.min(endTime, boxEnd) - boxStart;
-  } else {
-    visiblePortion = Math.min(endTime, boxEnd) - startTime;
+    startTime = boxStart;
+    options.omitStart = true;
   }
+  if (endTime > boxEnd) {
+    endTime = boxEnd;
+    options.omitEnd = true;
+  }
+  const visiblePortion = endTime - startTime;
   if (visiblePortion <= 0) {
-    return 0;
+    return [0, options];
   }
-  return Math.ceil(visiblePortion / 600000) * 10;
+  return [Math.ceil(visiblePortion / 600000) * 10, options];
+}
+
+function createChannelHeader(baseTime) {
+  const header = [];
+  for (let i = 0; i < 6; i++) {
+    header.push({
+      duration: 10,
+      displayTime: formatTime(new Date(baseTime.getTime() + 600000 * i))
+    });
+  }
+  return header;
 }

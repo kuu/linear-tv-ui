@@ -29,7 +29,8 @@ function checkCurrentTime() {
   if (timeBase.getTime() !== currentTimeBase.getTime()) {
     currentTimeBase = timeBase;
     currentChannelView = program.createChannelView(channelData, currentTimeBase, selectedChannelId);
-    renderChannels(currentChannelView);
+    const header = program.createChannelHeader(timeBase);
+    renderChannels(currentChannelView, header);
   }
   swithProgramIfNeeded(currentChannelView);
 }
@@ -48,10 +49,10 @@ function swithProgramIfNeeded(view) {
   }
 }
 
-function renderChannels(channels) {
+function renderChannels(channels, header) {
   const destProgram = document.querySelector('.myoo-program-section');
   const container = document.createElement('div');
-  container.innerHTML = TVApp.templates.program({channels, data: '', baseTime: '', initialChannel: ''});
+  container.innerHTML = TVApp.templates.program({channels, header, data: '', baseTime: '', initialChannel: ''});
   const srcProgram = container.querySelector('.myoo-program-section');
   destProgram.innerHTML = srcProgram.innerHTML;
 }
