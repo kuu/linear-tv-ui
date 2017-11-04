@@ -3,11 +3,21 @@ const config = require('config');
 const debug = require('debug');
 const api = require('../libs/ooyala');
 const channels = require('../models/channels');
-const {createChannelView, getTimeBase, createChannelHeader} = require('../libs/shared/program');
+const {createChannelView, getTimeBase, createChannelHeader, IDLE_TIME_ASSET} = require('../libs/shared/program');
 const {getPcode} = require('../libs/utils');
 
 const router = express.Router();
 const print = debug('comment');
+
+function getEmbedCodeList(data) {
+  const list = [IDLE_TIME_ASSET];
+  for (const {programs} of data) {
+    for (const program of programs) {
+      list.push(program.embed_code);
+    }
+  }
+  return list.join(',');
+}
 
 router.get('/', (req, res) => {
   print(`/ called`);
@@ -17,7 +27,7 @@ router.get('/', (req, res) => {
     const view = createChannelView(data, baseTime, initialChannel);
     const header = createChannelHeader(baseTime);
     const embedCode = view[0].programs[0].embedCode;
-    const embedToken = api.getTokenRequest(embedCode);
+    const embedToken = api.getTokenRequest(getEmbedCodeList(data));
     res.render('program', {
       data: JSON.stringify(data),
       view: JSON.stringify(view),

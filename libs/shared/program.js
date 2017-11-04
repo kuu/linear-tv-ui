@@ -1,7 +1,10 @@
+const IDLE_TIME_ASSET = 'U3Mmk4ZDE6RraNKzalVrPof6xcQPVtmo';
+
 module.exports = {
   getTimeBase,
   createChannelView,
-  createChannelHeader
+  createChannelHeader,
+  IDLE_TIME_ASSET
 };
 
 function getTimeBase(date) {
@@ -49,7 +52,7 @@ function createChannelView(channels, currentTimeBase, selectedChannelId) {
           timeBase,
           start,
           idleDuration,
-          {duration: idleDuration, title: 'Idle time', embed_code: 'lmcXgzNTE65htD8QaqLYu0lj59FODGT4'},
+          {duration: idleDuration, title: 'Idle time', embed_code: IDLE_TIME_ASSET},
           {omitStart: channelView.programs.length === 0}
         ));
       }
@@ -62,7 +65,7 @@ function createChannelView(channels, currentTimeBase, selectedChannelId) {
         timeBase,
         timeBaseEnd,
         duration,
-        {duration, title: 'Idle time', embed_code: 'lmcXgzNTE65htD8QaqLYu0lj59FODGT4'},
+        {duration, title: 'Idle time', embed_code: IDLE_TIME_ASSET},
         {omitEnd: true}
       ));
     }
